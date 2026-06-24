@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { CreditCard, Search, Filter, Download, Calendar, DollarSign, Check, Clock, X } from 'lucide-react';
+import { CreditCard, Search, Download, Calendar, DollarSign, Check, Clock, X } from 'lucide-react';
 import axios from 'axios';
+import { AdminTableLoadingState } from '../LoadingStates';
 
 const safeText = (value) => (typeof value === 'string' ? value : '');
 
@@ -201,10 +202,11 @@ export default function AdminPaymentHistory() {
       </div>
 
       {/* Payments Table */}
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        {loading ? (
-          <div className="p-8 text-center text-gray-500">Loading payments...</div>
-        ) : filteredPayments.length > 0 ? (
+      {loading ? (
+        <AdminTableLoadingState columns={6} />
+      ) : (
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          {filteredPayments.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
@@ -243,10 +245,11 @@ export default function AdminPaymentHistory() {
               </tbody>
             </table>
           </div>
-        ) : (
-          <div className="p-8 text-center text-gray-500">No payments found</div>
-        )}
-      </div>
+          ) : (
+            <div className="p-8 text-center text-gray-500">No payments found</div>
+          )}
+        </div>
+      )}
 
       {/* Pagination */}
       {!loading && (

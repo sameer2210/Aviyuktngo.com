@@ -32,6 +32,17 @@ const paymentModel = mongoose.Schema({
     status:{
         type:String,
         default:'pending',
+    },
+    receipt:{
+        tokenHash:String,
+        url:String,
+        issuedAt:Date,
+        emailStatus:{
+            type:String,
+            enum:['not_configured','pending','sent','failed'],
+        },
+        emailSentAt:Date,
+        emailError:String,
     }
 
 },{timestamps:true});

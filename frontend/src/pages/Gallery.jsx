@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { categoryAPI, imageAPI } from '../api/adminAPI';
-import { Loader, X, ChevronRight, Image, Folder, Palette } from 'lucide-react';
+import { X, ChevronRight, Image, Folder, Palette } from 'lucide-react';
+import SkeletonImage from '../Components/SkeletonImage';
+import { GalleryGridLoadingState } from '../Components/LoadingStates';
 
 export default function Gallery() {
   const [categories, setCategories] = useState([]);
@@ -60,9 +62,7 @@ export default function Gallery() {
         {!selectedCategory ? (
           <div className="space-y-6">
             {loading ? (
-              <div className="flex justify-center items-center py-12">
-                <Loader size={36} className="animate-spin text-blue-600" />
-              </div>
+              <GalleryGridLoadingState />
             ) : categories.length > 0 ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {categories.map((category) => (
@@ -73,9 +73,10 @@ export default function Gallery() {
                   >
                     <div className="relative w-full h-full overflow-hidden bg-gray-300">
                       {category.categoryImage ? (
-                        <img
+                        <SkeletonImage
                           src={category.categoryImage}
                           alt={category.name}
+                          loading="lazy"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       ) : (
@@ -131,9 +132,7 @@ export default function Gallery() {
             </div>
 
             {loading ? (
-              <div className="flex justify-center items-center py-12">
-                <Loader size={36} className="animate-spin text-blue-600" />
-              </div>
+              <GalleryGridLoadingState />
             ) : images.length > 0 ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {images.map((image) => (
@@ -143,9 +142,10 @@ export default function Gallery() {
                     className="group relative overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-all duration-300 h-48"
                   >
                     <div className="relative w-full h-full overflow-hidden bg-gray-200">
-                      <img
+                      <SkeletonImage
                         src={image.imageUrl}
                         alt={image.title}
+                        loading="lazy"
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       />
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center">
@@ -195,9 +195,10 @@ export default function Gallery() {
             
             {/* Image */}
             <div className="relative bg-gray-100 flex items-center justify-center" style={{ maxHeight: 'calc(80vh - 80px)' }}>
-              <img 
+              <SkeletonImage
                 src={selectedImage.imageUrl} 
                 alt={selectedImage.title} 
+                loading="eager"
                 className="max-w-full max-h-full object-contain" 
               />
             </div>

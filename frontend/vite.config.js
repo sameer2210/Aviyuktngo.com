@@ -30,12 +30,6 @@ export default defineConfig({
             'framer-motion',
             '@gsap/react',
           ],
-          'pdf': [
-            'jspdf',
-            'html2pdf.js',
-            'html2canvas',
-            'jspdf-autotable',
-          ],
         },
       },
     },

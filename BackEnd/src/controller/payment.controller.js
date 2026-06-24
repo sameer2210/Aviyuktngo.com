@@ -1,6 +1,7 @@
 const paymentModel = require('../models/payment.model');
 const Razorpay = require('razorpay');
 const { validatePaymentVerification } = require('razorpay/dist/utils/razorpay-utils');
+const { deliverReceiptForPayment, renderReceiptHtmlByToken } = require('../services/receipt.service');
 
 const getRazorpayCredentials = () => {
   const keyId = process.env.RAZORPAY_KEY_ID?.trim();
@@ -101,10 +102,28 @@ const paymentverify = async (req, res) => {
     payment.status = 'completed';
     await payment.save();
 
-    return res.json({ status: 'success' });
+    const receipt = await deliverReceiptForPayment(payment, req);
+
+    return res.json({ status: 'success', receipt });
   } catch (error) {
     console.error('Error verifying payment:', error);
     return res.status(500).json({ message: 'Error verifying payment', error: error.message });
+  }
+};
+
+const viewReceipt = async (req, res) => {
+  try {
+    const receiptHtml = await renderReceiptHtmlByToken(req.params.token);
+
+    if (!receiptHtml) {
+      return res.status(404).send('Receipt not found');
+    }
+
+    res.set('Content-Type', 'text/html; charset=utf-8');
+    return res.status(200).send(receiptHtml);
+  } catch (error) {
+    console.error('Receipt render error:', error);
+    return res.status(500).send('Unable to load receipt');
   }
 };
 
@@ -141,4 +160,4 @@ const getAllPaymentsAdmin = async (req, res) => {
   }
 };
 
-module.exports = { paymentcreate, paymentverify, getPaymentHistory, getAllPaymentsAdmin };
+module.exports = { paymentcreate, paymentverify, viewReceipt, getPaymentHistory, getAllPaymentsAdmin };

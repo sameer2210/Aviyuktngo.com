@@ -1,6 +1,4 @@
 import { ChevronDownIcon } from '@heroicons/react/solid';
-import html2canvas from 'html2canvas';
-import { jsPDF } from 'jspdf';
 import { useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SkeletonImage from '../Components/SkeletonImage';
@@ -222,6 +220,16 @@ const Highlights = () => {
     setIsDownloadingReceipt(true);
 
     try {
+      const [{ default: html2canvas }, jsPdfModule] = await Promise.all([
+        import('html2canvas'),
+        import('jspdf'),
+      ]);
+      const jsPDF = jsPdfModule.jsPDF || jsPdfModule.default;
+
+      if (!jsPDF) {
+        throw new Error('jsPDF failed to load');
+      }
+
       const receiptElement = receiptRef.current;
       const canvas = await html2canvas(receiptElement, {
         scale: Math.max(window.devicePixelRatio || 1, 2),

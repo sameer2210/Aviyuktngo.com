@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { GoogleLogin as GoogleOAuthButton, GoogleOAuthProvider } from '@react-oauth/google';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/useAuth';
+import { InlineLoading } from '../LoadingStates';
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
@@ -99,7 +100,7 @@ const GoogleLogin = () => {
       {!googleClientId ? (
         isClientIdLoading ? (
           <p className="text-sm text-[#335288] bg-blue-50 border border-blue-200 rounded-md p-3 text-center">
-            Preparing Google sign-in...
+            <InlineLoading label="Preparing Google sign-in" />
           </p>
         ) : (
           <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-md p-3">
@@ -123,7 +124,9 @@ const GoogleLogin = () => {
       )}
 
       {isSigningIn && (
-        <p className="mt-4 text-sm text-[#335288] text-center">Signing you in, please wait...</p>
+        <p className="mt-4 text-sm text-[#335288] text-center">
+          <InlineLoading label="Signing you in" />
+        </p>
       )}
       {(localError || authError) && (
         <p className="mt-4 text-sm text-red-700 bg-red-50 border border-red-200 rounded-md p-3 text-center">

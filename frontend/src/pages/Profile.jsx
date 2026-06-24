@@ -3,6 +3,7 @@ import { FiLogOut } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
 import SkeletonImage from '../Components/SkeletonImage';
+import { RouteLoadingState } from '../Components/LoadingStates';
 
 const Profile = () => {
   const { user, logout, isAuthLoading } = useAuth();
@@ -90,11 +91,7 @@ const Profile = () => {
   };
 
   if (isAuthLoading) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex justify-center items-center p-4 md:p-10">
-        <p className="text-gray-500">Loading profile...</p>
-      </div>
-    );
+    return <RouteLoadingState label="Loading profile" />;
   }
 
   return (

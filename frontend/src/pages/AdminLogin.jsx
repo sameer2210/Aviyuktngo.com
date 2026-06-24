@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Lock, LogIn, AlertCircle } from 'lucide-react';
 import { adminAuthAPI } from '../api/adminAuthAPI';
 import { useAdminAuth } from '../context/useAdminAuth';
+import { InlineLoading } from '../Components/LoadingStates';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -94,10 +95,7 @@ export default function AdminLogin() {
               className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:opacity-50 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
             >
               {loading ? (
-                <>
-                  <div className="animate-spin">⏳</div>
-                  Logging in...
-                </>
+                <InlineLoading label="Logging in" />
               ) : (
                 <>
                   <LogIn size={20} />

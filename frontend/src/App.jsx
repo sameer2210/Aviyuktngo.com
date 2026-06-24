@@ -6,6 +6,7 @@ import Footer from './Components/Footer';
 import { servicesData } from './data/servicesData';
 import ProtectedRoute from './routes/ProtectedRoute';
 import ProtectedAdminRoute from './routes/ProtectedAdminRoute';
+import { RouteLoadingState } from './Components/LoadingStates';
 
 const Home = lazy(() => import('./pages/Home'));
 const Storyline = lazy(() => import('./pages/Storyline'));
@@ -22,17 +23,6 @@ const Gallery = lazy(() => import('./pages/Gallery'));
 const AdminDashboard = lazy(() => import('./Components/Admin/AdminDashboard'));
 const AdminLogin = lazy(() => import('./pages/AdminLogin'));
 
-const RouteFallback = () => (
-  <div className="min-h-[60vh] w-full bg-[#ebebeb] p-6 md:p-10">
-    <div className="h-10 w-56 rounded-lg bg-slate-200/90 animate-pulse mb-8" />
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div className="h-56 rounded-2xl bg-slate-200/80 animate-pulse" />
-      <div className="h-56 rounded-2xl bg-slate-200/80 animate-pulse" />
-    </div>
-    <div className="h-40 mt-6 rounded-2xl bg-slate-200/70 animate-pulse" />
-  </div>
-);
-
 const App = () => {
   return (
     <>
@@ -41,7 +31,7 @@ const App = () => {
         <meta name="description" content="Aviyukt NGO is a leading non-profit organization in Bhopal, Madhya Pradesh, dedicated to empowering communities and creating a positive impact." />
       </Helmet>
       <Navbar />
-      <Suspense fallback={<RouteFallback />}>
+      <Suspense fallback={<RouteLoadingState label="Loading Aviyukt page" />}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/storyline" element={<Storyline />} />

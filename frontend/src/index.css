@@ -136,6 +136,67 @@
     font-family: 'Manrope', system-ui, sans-serif;
     font-weight: 500;
   }
+
+  .loading-skeleton {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(110deg, #e4e8ef 0%, #f5f2ec 46%, #dbe3ee 100%);
+    background-size: 220% 100%;
+    box-shadow: inset 0 0 0 1px rgba(51, 82, 136, 0.08);
+    animation: loading-shimmer 1.35s ease-in-out infinite;
+  }
+
+  .loading-skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.48) 48%,
+      transparent 100%
+    );
+    transform: translateX(-100%);
+    animation: loading-sheen 1.8s ease-in-out infinite;
+  }
+
+  .loading-dot {
+    animation: loading-dot 1s ease-in-out infinite;
+  }
+}
+
+@keyframes loading-shimmer {
+  0% {
+    background-position: 120% 0;
+  }
+
+  100% {
+    background-position: -80% 0;
+  }
+}
+
+@keyframes loading-sheen {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  55%,
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes loading-dot {
+  0%,
+  100% {
+    transform: scale(0.72);
+    opacity: 0.42;
+  }
+
+  50% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
 }
 
 @keyframes hero-grain-shift {
@@ -186,5 +247,11 @@
 
   .hero-parallax {
     transform: none !important;
+  }
+
+  .loading-skeleton,
+  .loading-skeleton::after,
+  .loading-dot {
+    animation: none !important;
   }
 }

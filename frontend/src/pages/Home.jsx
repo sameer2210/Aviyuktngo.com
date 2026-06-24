@@ -1,8 +1,8 @@
 import { useEffect, useState, Suspense, lazy } from 'react';
 import { Link } from 'react-router-dom';
 import HeroSection from '../Components/HomeSections/HeroSection';
-import HomeLoader from '../Components/HomeSections/HomeLoader';
 import SkeletonImage from '../Components/SkeletonImage';
+import { SectionLoadingState } from '../Components/LoadingStates';
 import { slides } from '../data/homepageContent';
 import axios from '../instant/axios';
 
@@ -14,10 +14,7 @@ const TransparencySection = lazy(() => import('../Components/HomeSections/Transp
 const TrustHighlightsSection = lazy(() => import('../Components/HomeSections/TrustHighlightsSection'));
 const CtaSection = lazy(() => import('../Components/HomeSections/CtaSection'));
 
-// Fallback component
-const SectionLoader = () => (
-  <div className="w-full h-96 bg-gray-200 animate-pulse rounded-lg" />
-);
+const SectionLoader = () => <SectionLoadingState />;
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);

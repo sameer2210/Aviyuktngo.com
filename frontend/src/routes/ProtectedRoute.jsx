@@ -1,17 +1,14 @@
 import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
+import { RouteLoadingState } from '../Components/LoadingStates';
 
 const ProtectedRoute = () => {
   const { isAuthenticated, isAuthLoading } = useAuth();
   const location = useLocation();
 
   if (isAuthLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#ebebeb]">
-        <p className="text-[#335288] text-lg">Checking your session...</p>
-      </div>
-    );
+    return <RouteLoadingState label="Checking your session" />;
   }
 
   if (!isAuthenticated) {

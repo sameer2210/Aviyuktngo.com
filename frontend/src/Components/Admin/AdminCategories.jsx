@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { categoryAPI } from '../../api/adminAPI';
-import { Plus, Edit2, Trash2, Image as ImageIcon, Loader } from 'lucide-react';
+import { Plus, Edit2, Trash2, Image as ImageIcon } from 'lucide-react';
+import SkeletonImage from '../SkeletonImage';
+import { GalleryGridLoadingState, InlineLoading } from '../LoadingStates';
 
 export default function AdminCategories() {
   const [categories, setCategories] = useState([]);
@@ -188,7 +190,7 @@ export default function AdminCategories() {
                 disabled={loading}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg flex items-center gap-2 disabled:opacity-50 transition"
               >
-                {loading ? <Loader size={20} className="animate-spin" /> : 'Save'}
+                {loading ? <InlineLoading label="Saving" /> : 'Save'}
               </button>
               <button
                 type="button"
@@ -205,14 +207,12 @@ export default function AdminCategories() {
       {/* Categories List */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {loading && !showForm ? (
-          <div className="col-span-full flex justify-center">
-            <Loader size={32} className="animate-spin text-blue-600" />
-          </div>
+          <GalleryGridLoadingState className="col-span-full" />
         ) : categories.length > 0 ? (
           categories.map((category) => (
             <div key={category._id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
               {category.categoryImage && (
-                <img src={category.categoryImage} alt={category.name} className="w-full h-32 object-cover" />
+                <SkeletonImage src={category.categoryImage} alt={category.name} className="w-full h-32 object-cover" />
               )}
               <div className="p-4">
                 <h3 className="text-lg font-semibold text-gray-800 mb-1">{category.name}</h3>

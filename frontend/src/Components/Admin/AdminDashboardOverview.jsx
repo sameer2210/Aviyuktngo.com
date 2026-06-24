@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Grid, Images, Users, TrendingUp, DollarSign, ShoppingCart } from 'lucide-react';
+import { Grid, Images, Users, DollarSign } from 'lucide-react';
 import { categoryAPI, imageAPI } from '../../api/adminAPI';
 import axios from 'axios';
+import SkeletonBlock from '../LoadingStates';
 
 export default function AdminDashboardOverview() {
   const [stats, setStats] = useState({
@@ -30,7 +31,6 @@ export default function AdminDashboardOverview() {
 
         const payments = Array.isArray(paymentsRes.data) ? paymentsRes.data : [];
         const totalRevenue = payments.reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
-        const completedPayments = payments.filter((p) => p.status === 'completed').length;
 
         setStats({
           totalCategories: categoriesRes.data?.length || 0,
@@ -80,9 +80,10 @@ export default function AdminDashboardOverview() {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-pulse">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4" role="status" aria-live="polite" aria-label="Loading dashboard">
+        <span className="sr-only">Loading dashboard</span>
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="bg-gray-200 h-40 rounded-lg" />
+          <SkeletonBlock key={i} className="h-40 rounded-lg" />
         ))}
       </div>
     );

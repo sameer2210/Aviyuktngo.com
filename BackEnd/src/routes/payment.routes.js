@@ -1,11 +1,13 @@
 const express = require('express');
-const { paymentcreate, paymentverify, getPaymentHistory, getAllPaymentsAdmin } = require('../controller/payment.controller.js');
+const { paymentcreate, paymentverify, viewReceipt, getPaymentHistory, getAllPaymentsAdmin } = require('../controller/payment.controller.js');
 const { isAdmin } = require('../middleware/authMiddleware');
 const router = express.Router();
 
 router.post('/paymentcreate', paymentcreate);
 
 router.post('/paymentverify', paymentverify);
+
+router.get('/receipt/:token', viewReceipt);
 
 router.post('/payHistory', getPaymentHistory);
 

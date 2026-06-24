@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Users, Search, Filter, MoreVertical, Mail, Calendar, Loader } from 'lucide-react';
+import { Users, Search, Filter, MoreVertical, Mail, Calendar } from 'lucide-react';
 import axios from 'axios';
+import { AdminTableLoadingState } from '../LoadingStates';
 
 const safeText = (value) => (typeof value === 'string' ? value : '');
 
@@ -43,11 +44,7 @@ export default function AdminUsers() {
   }, [searchTerm, users]);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader className="animate-spin text-blue-600" size={32} />
-      </div>
-    );
+    return <AdminTableLoadingState columns={5} />;
   }
 
   return (

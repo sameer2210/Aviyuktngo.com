@@ -1,11 +1,12 @@
 import { Navigate } from 'react-router-dom';
 import { useAdminAuth } from '../context/useAdminAuth';
+import { RouteLoadingState } from '../Components/LoadingStates';
 
 export default function ProtectedAdminRoute({ children }) {
   const { isAdminLoggedIn, loading } = useAdminAuth();
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return <RouteLoadingState label="Checking admin access" />;
   }
 
   if (!isAdminLoggedIn) {

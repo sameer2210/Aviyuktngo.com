@@ -116,7 +116,7 @@ const SkeletonImage = ({
       {isLoading && (
         <div
           aria-hidden
-          className={`absolute inset-0 animate-pulse bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 ${roundedClasses} ${skeletonClassName}`.trim()}
+          className={`absolute inset-0 loading-skeleton ${roundedClasses} ${skeletonClassName}`.trim()}
         />
       )}
       {isError && (
