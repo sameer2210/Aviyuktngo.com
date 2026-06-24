@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { CreditCard, Search, Filter, Download, Calendar, DollarSign, Check, Clock, X } from 'lucide-react';
 import axios from 'axios';
 
+const safeText = (value) => (typeof value === 'string' ? value : '');
+
 export default function AdminPaymentHistory() {
   const [payments, setPayments] = useState([]);
   const [filteredPayments, setFilteredPayments] = useState([]);
@@ -45,8 +47,8 @@ export default function AdminPaymentHistory() {
       setPayments(paymentData);
 
       // Calculate stats
-      const totalRevenue = paymentData.reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
-      const successfulPayments = paymentData.filter((p) => p.status === 'completed').length;
+      const totalRevenue = paymentData.reduce((sum, p) => sum + (Number(p?.amount) || 0), 0);
+      const successfulPayments = paymentData.filter((p) => p?.status === 'completed').length;
 
       setStats({
         totalRevenue,
@@ -74,14 +76,14 @@ export default function AdminPaymentHistory() {
     if (search) {
       filtered = filtered.filter(
         (payment) =>
-          payment.name?.toLowerCase().includes(search.toLowerCase()) ||
-          payment.email?.toLowerCase().includes(search.toLowerCase()) ||
-          payment.orderId?.includes(search)
+          safeText(payment?.name).toLowerCase().includes(search.toLowerCase()) ||
+          safeText(payment?.email).toLowerCase().includes(search.toLowerCase()) ||
+          safeText(payment?.orderId).includes(search)
       );
     }
 
     if (status !== 'all') {
-      filtered = filtered.filter((payment) => payment.status === status);
+      filtered = filtered.filter((payment) => payment?.status === status);
     }
 
     setFilteredPayments(filtered);
@@ -216,24 +218,24 @@ export default function AdminPaymentHistory() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {filteredPayments.map((payment) => (
-                  <tr key={payment._id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 text-gray-800 font-mono text-sm">{payment.orderId?.slice(0, 8)}...</td>
-                    <td className="px-6 py-4 text-gray-800 font-medium">{payment.name || 'N/A'}</td>
-                    <td className="px-6 py-4 text-gray-600 text-sm">{payment.email || 'N/A'}</td>
-                    <td className="px-6 py-4 text-gray-800 font-semibold">₹{Number(payment.amount || 0).toLocaleString('en-IN')}</td>
+                {filteredPayments.map((payment, index) => (
+                  <tr key={payment?._id || index} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 text-gray-800 font-mono text-sm">{payment?.orderId ? `${payment.orderId.slice(0, 8)}...` : 'N/A'}</td>
+                    <td className="px-6 py-4 text-gray-800 font-medium">{payment?.name || 'N/A'}</td>
+                    <td className="px-6 py-4 text-gray-600 text-sm">{payment?.email || 'N/A'}</td>
+                    <td className="px-6 py-4 text-gray-800 font-semibold">₹{Number(payment?.amount || 0).toLocaleString('en-IN')}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        {getStatusIcon(payment.status)}
-                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(payment.status)}`}>
-                          {payment.status?.charAt(0).toUpperCase() + payment.status?.slice(1)}
+                        {getStatusIcon(payment?.status)}
+                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(payment?.status)}`}>
+                          {payment?.status ? payment.status.charAt(0).toUpperCase() + payment.status.slice(1) : 'N/A'}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-gray-600 text-sm">
                       <div className="flex items-center gap-2">
                         <Calendar size={16} />
-                        {payment.createdAt ? new Date(payment.createdAt).toLocaleDateString('en-IN') : 'N/A'}
+                        {payment?.createdAt ? new Date(payment.createdAt).toLocaleDateString('en-IN') : 'N/A'}
                       </div>
                     </td>
                   </tr>

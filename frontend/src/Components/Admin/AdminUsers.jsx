@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Users, Search, Filter, MoreVertical, Mail, Calendar, Loader } from 'lucide-react';
 import axios from 'axios';
 
+const safeText = (value) => (typeof value === 'string' ? value : '');
+
 export default function AdminUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,8 +36,8 @@ export default function AdminUsers() {
   useEffect(() => {
     const filtered = users.filter(
       (user) =>
-        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase())
+        safeText(user?.name).toLowerCase().includes(searchTerm.toLowerCase()) ||
+        safeText(user?.email).toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredUsers(filtered);
   }, [searchTerm, users]);
@@ -102,19 +104,19 @@ export default function AdminUsers() {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {filteredUsers.length > 0 ? (
-                filteredUsers.map((user) => (
-                  <tr key={user._id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 text-gray-800 font-medium">{user.name}</td>
+                filteredUsers.map((user, index) => (
+                  <tr key={user?._id || index} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 text-gray-800 font-medium">{user?.name || 'N/A'}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2 text-gray-600">
                         <Mail size={16} />
-                        {user.email}
+                        {user?.email || 'N/A'}
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2 text-gray-600">
                         <Calendar size={16} />
-                        {new Date(user.createdAt).toLocaleDateString()}
+                        {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
                       </div>
                     </td>
                     <td className="px-6 py-4">

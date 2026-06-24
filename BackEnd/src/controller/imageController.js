@@ -2,6 +2,36 @@ const imageModel = require('../models/image.model');
 const categoryModel = require('../models/category.model');
 const { cloudinary } = require('../middleware/uploadMiddleware');
 
+const formatCategoryRef = (categoryRef) => {
+  if (!categoryRef || !categoryRef._id) {
+    return null;
+  }
+
+  return {
+    _id: categoryRef._id,
+    name: categoryRef.name || 'Deleted category',
+  };
+};
+
+const formatImageResponse = (imageDoc) => {
+  if (!imageDoc) {
+    return null;
+  }
+
+  const plainImage = typeof imageDoc.toObject === 'function' ? imageDoc.toObject() : { ...imageDoc };
+  const categoryRef = formatCategoryRef(plainImage.categoryId);
+
+  return {
+    ...plainImage,
+    categoryId: categoryRef,
+    categoryName: categoryRef?.name || 'Deleted category',
+    categoryMissing: !categoryRef,
+  };
+};
+
+const getActiveCategoryById = async (categoryId) =>
+  categoryModel.findOne({ _id: categoryId, isActive: true }).select('_id name');
+
 // Create Image (Single or Multiple)
 exports.createImage = async (req, res) => {
   try {
@@ -12,10 +42,18 @@ exports.createImage = async (req, res) => {
     
     const { categoryId, title, description } = req.body;
 
+    if (!categoryId || !String(categoryId).trim()) {
+      return res.status(400).json({ error: 'Category ID is required' });
+    }
+
+    if (!title || !String(title).trim()) {
+      return res.status(400).json({ error: 'Image title is required' });
+    }
+
     // Check if category exists
-    const category = await categoryModel.findById(categoryId);
+    const category = await getActiveCategoryById(categoryId);
     if (!category) {
-      return res.status(404).json({ error: 'Category not found' });
+      return res.status(404).json({ error: 'Category not found or inactive' });
     }
 
     // Handle both single and multiple files
@@ -47,15 +85,16 @@ exports.createImage = async (req, res) => {
       }
 
       const newImage = new imageModel({
-        categoryId,
-        title: `${title}${filesToProcess.length > 1 ? ` ${i + 1}` : ''}`,
+        categoryId: String(categoryId).trim(),
+        title: `${String(title).trim()}${filesToProcess.length > 1 ? ` ${i + 1}` : ''}`,
         description: description || '',
         imageUrl,
         publicId,
       });
 
       await newImage.save();
-      createdImages.push(newImage);
+      const populatedImage = await imageModel.findById(newImage._id).populate('categoryId', 'name');
+      createdImages.push(formatImageResponse(populatedImage));
       console.log(`Image ${i + 1} saved:`, newImage);
     }
 
@@ -69,6 +108,10 @@ exports.createImage = async (req, res) => {
     });
   } catch (error) {
     console.error('Create image error:', error);
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ error: error.message });
+    }
+
     res.status(500).json({ error: error.message });
   }
 };
@@ -81,9 +124,15 @@ exports.getAllImages = async (req, res) => {
       .populate('categoryId', 'name')
       .sort({ createdAt: -1 });
 
+    const formattedImages = images.map(formatImageResponse);
+    const orphanedCount = formattedImages.filter((image) => image.categoryMissing).length;
+
     res.status(200).json({
       message: 'Images fetched successfully',
-      images,
+      images: formattedImages,
+      meta: {
+        orphanedCount,
+      },
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -96,18 +145,19 @@ exports.getImagesByCategory = async (req, res) => {
     const { categoryId } = req.params;
 
     // Check if category exists
-    const category = await categoryModel.findById(categoryId);
+    const category = await getActiveCategoryById(categoryId);
     if (!category) {
       return res.status(404).json({ error: 'Category not found' });
     }
 
     const images = await imageModel
       .find({ categoryId, isActive: true })
+      .populate('categoryId', 'name')
       .sort({ createdAt: -1 });
 
     res.status(200).json({
       message: 'Category images fetched successfully',
-      images,
+      images: images.map(formatImageResponse),
       categoryName: category.name,
     });
   } catch (error) {
@@ -127,7 +177,7 @@ exports.getImageById = async (req, res) => {
 
     res.status(200).json({
       message: 'Image fetched successfully',
-      image,
+      image: formatImageResponse(image),
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -138,15 +188,40 @@ exports.getImageById = async (req, res) => {
 exports.updateImage = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description } = req.body;
+    const { title, description, categoryId } = req.body;
 
     const image = await imageModel.findById(id);
     if (!image) {
       return res.status(404).json({ error: 'Image not found' });
     }
 
-    if (title) image.title = title;
-    if (description) image.description = description;
+    if (typeof title === 'string') {
+      const trimmedTitle = title.trim();
+      if (!trimmedTitle) {
+        return res.status(400).json({ error: 'Image title cannot be empty' });
+      }
+
+      image.title = trimmedTitle;
+    }
+
+    if (typeof description === 'string') {
+      image.description = description;
+    }
+
+    if (typeof categoryId !== 'undefined') {
+      const trimmedCategoryId = String(categoryId).trim();
+
+      if (!trimmedCategoryId) {
+        return res.status(400).json({ error: 'Category ID is required' });
+      }
+
+      const category = await getActiveCategoryById(trimmedCategoryId);
+      if (!category) {
+        return res.status(404).json({ error: 'Category not found or inactive' });
+      }
+
+      image.categoryId = trimmedCategoryId;
+    }
 
     // Update image file if new one is uploaded
     if (req.file) {
@@ -166,13 +241,18 @@ exports.updateImage = async (req, res) => {
     }
 
     await image.save();
+    const updatedImage = await imageModel.findById(image._id).populate('categoryId', 'name');
 
     res.status(200).json({
       message: 'Image updated successfully',
-      image,
+      image: formatImageResponse(updatedImage),
     });
   } catch (error) {
     console.error('Update image error:', error);
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ error: error.message });
+    }
+
     res.status(500).json({ error: error.message });
   }
 };

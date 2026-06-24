@@ -1,4 +1,5 @@
 const categoryModel = require('../models/category.model');
+const imageModel = require('../models/image.model');
 const { cloudinary } = require('../middleware/uploadMiddleware');
 
 // Create Category
@@ -166,10 +167,19 @@ exports.deleteCategory = async (req, res) => {
       await cloudinary.uploader.destroy(category.categoryImagePublicId);
     }
 
+    const linkedImages = await imageModel.find({ categoryId: id });
+    await Promise.allSettled(
+      linkedImages.map((image) =>
+        image.publicId ? cloudinary.uploader.destroy(image.publicId) : Promise.resolve()
+      )
+    );
+    const deletedImagesResult = await imageModel.deleteMany({ categoryId: id });
+
     await categoryModel.findByIdAndDelete(id);
 
     res.status(200).json({
       message: 'Category deleted successfully',
+      deletedImagesCount: deletedImagesResult.deletedCount || 0,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });

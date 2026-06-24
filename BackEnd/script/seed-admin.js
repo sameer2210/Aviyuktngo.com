@@ -1,7 +1,7 @@
 const dotenv = require('dotenv');
 dotenv.config();
 const mongoose = require('mongoose');
-const Admin = require('./src/models/admin.model');
+const Admin = require('../src/models/admin.model');
 
 const seedAdmin = async () => {
   try {
@@ -13,6 +13,8 @@ const seedAdmin = async () => {
     const existingAdmin = await Admin.findOne({ username: 'admin@aviyukt.org' });
     if (existingAdmin) {
       console.log('✅ Admin already exists:', existingAdmin.username);
+       console.log('📧 Email:', existingAdmin.email);
+       console.log('🔐 Password:', existingAdmin.password);
       await mongoose.connection.close();
       return;
     }
@@ -32,6 +34,7 @@ const seedAdmin = async () => {
     console.log('✅ Admin created successfully!');
     console.log(`Username: ${adminData.username}`);
     console.log(`Password: ${adminData.password}`);
+    console.log('📬 Email:', adminData.email);
     console.log(`Role: ${adminData.role}`);
 
     await mongoose.connection.close();

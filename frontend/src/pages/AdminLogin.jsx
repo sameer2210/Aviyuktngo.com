@@ -107,7 +107,7 @@ export default function AdminLogin() {
             </button>
           </form>
 
-        
+
         </div>
 
         {/* Back Link */}

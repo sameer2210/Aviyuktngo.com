@@ -68,11 +68,11 @@ const PayHistory = () => {
         <div className="mt-6 space-y-4">
           {history.map((payment, index) => (
             <div key={index} className="border p-4 rounded text-sm">
-              <p><b>Name:</b> {payment.name}</p>
-              <p><b>Email:</b> {payment.email}</p>
-              <p><b>Amount:</b> ₹{payment.amount}</p>
-              <p><b>Payment ID:</b> {payment.paymentId}</p>
-              <p><b>Date:</b> {new Date(payment.createdAt).toLocaleDateString()}</p>
+              <p><b>Name:</b> {payment.name || 'N/A'}</p>
+              <p><b>Email:</b> {payment.email || 'N/A'}</p>
+              <p><b>Amount:</b> ₹{payment.amount ?? 'N/A'}</p>
+              <p><b>Payment ID:</b> {payment.paymentId || 'N/A'}</p>
+              <p><b>Date:</b> {payment.createdAt ? new Date(payment.createdAt).toLocaleDateString() : 'N/A'}</p>
             </div>
           ))}
         </div>

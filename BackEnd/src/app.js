@@ -12,7 +12,9 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
+const helmet = require('helmet');
 
+app.use(helmet());
 // Compression middleware - compress all responses
 app.use(compression({ level: 6, threshold: 1024 }));
 
@@ -45,12 +47,12 @@ const defaultFrontendOrigins = [
 
 // CORS whitelisted origins from .env + defaults
 const envFrontendOrigins = process.env.FRONTEND_URLS
-  ? process.env.FRONTEND_URLS.split(',').map((u) => u.trim())
+  ? process.env.FRONTEND_URLS.split(',').map(u => u.trim())
   : [];
 
 const allowedOrigins = new Set(
   [...defaultFrontendOrigins, ...envFrontendOrigins]
-    .map((origin) => normalizeOrigin(origin))
+    .map(origin => normalizeOrigin(origin))
     .filter(Boolean)
 );
 
@@ -73,9 +75,7 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
-app.use(
-  cors(corsOptions)
-);
+app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
 app.use(express.json());

@@ -2,6 +2,21 @@ import { useState, useEffect } from 'react';
 import { imageAPI, categoryAPI } from '../../api/adminAPI';
 import { Plus, Edit2, Trash2, Image as ImageIcon, Loader } from 'lucide-react';
 
+const getImageCategoryId = (image) => {
+  if (!image?.categoryId) {
+    return '';
+  }
+
+  if (typeof image.categoryId === 'object') {
+    return image.categoryId._id || '';
+  }
+
+  return image.categoryId;
+};
+
+const getImageCategoryLabel = (image) =>
+  image?.categoryName || image?.categoryId?.name || 'Deleted category';
+
 export default function AdminImages() {
   const [images, setImages] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -18,6 +33,7 @@ export default function AdminImages() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
+  const [orphanedCount, setOrphanedCount] = useState(0);
 
   useEffect(() => {
     fetchData();
@@ -30,15 +46,16 @@ export default function AdminImages() {
         imageAPI.getAll(),
         categoryAPI.getAll(),
       ]);
-      
+
       console.log('Images Response:', imagesRes.data);
       console.log('Categories Response:', categoriesRes.data);
-      
+
       const imagesData = imagesRes.data.images || imagesRes.data;
       const categoriesData = categoriesRes.data.categories || categoriesRes.data;
-      
+
       setImages(Array.isArray(imagesData) ? imagesData : []);
       setCategories(Array.isArray(categoriesData) ? categoriesData : []);
+      setOrphanedCount(Number(imagesRes.data?.meta?.orphanedCount) || 0);
     } catch (err) {
       setError('Failed to fetch data');
       console.error('Fetch data error:', err);
@@ -52,11 +69,11 @@ export default function AdminImages() {
     if (files && files.length > 0) {
       // Store all selected files
       setFormData({ ...formData, image: files });
-      
+
       // Create previews for all selected images
       const previews = [];
       let loadedCount = 0;
-      
+
       Array.from(files).forEach((file, index) => {
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -94,30 +111,43 @@ export default function AdminImages() {
     try {
       setLoading(true);
 
-      // Handle multiple files
       const files = formData.image;
-      if (!files || files.length === 0) {
-        setError('Please select at least one image');
-        return;
-      }
+      if (editingId) {
+        if (files && files.length > 1) {
+          setError('Please upload only one replacement image when editing');
+          return;
+        }
 
-      // Upload each file separately
-      const uploadPromises = Array.from(files).map((file) => {
         const data = new FormData();
         data.append('categoryId', formData.categoryId);
-        data.append('title', `${formData.title} ${Array.from(files).indexOf(file) + 1}`);
+        data.append('title', formData.title);
         data.append('description', formData.description);
-        data.append('image', file);
 
-        if (editingId) {
-          return imageAPI.update(editingId, data);
-        } else {
-          return imageAPI.create(data);
+        if (files && files.length === 1) {
+          data.append('image', files[0]);
         }
-      });
 
-      const results = await Promise.all(uploadPromises);
-      setSuccess(`Successfully uploaded ${results.length} image(s)`);
+        await imageAPI.update(editingId, data);
+        setSuccess('Image updated successfully');
+      } else {
+        if (!files || files.length === 0) {
+          setError('Please select at least one image');
+          return;
+        }
+
+        const uploadPromises = Array.from(files).map((file, index) => {
+          const data = new FormData();
+          data.append('categoryId', formData.categoryId);
+          data.append('title', `${formData.title} ${index + 1}`);
+          data.append('description', formData.description);
+          data.append('image', file);
+
+          return imageAPI.create(data);
+        });
+
+        const results = await Promise.all(uploadPromises);
+        setSuccess(`Successfully uploaded ${results.length} image(s)`);
+      }
 
       resetForm();
       fetchData();
@@ -130,12 +160,12 @@ export default function AdminImages() {
 
   const handleEdit = (image) => {
     setFormData({
-      categoryId: image.categoryId._id,
-      title: image.title,
-      description: image.description,
+      categoryId: getImageCategoryId(image),
+      title: image.title || '',
+      description: image.description || '',
       image: null,
     });
-    setImagePreview(image.imageUrl);
+    setImagePreviews(image.imageUrl ? [image.imageUrl] : []);
     setEditingId(image._id);
     setShowForm(true);
   };
@@ -167,7 +197,7 @@ export default function AdminImages() {
   const filteredImages =
     filterCategory === 'all'
       ? images
-      : images.filter((img) => img.categoryId._id === filterCategory);
+      : images.filter((img) => String(getImageCategoryId(img)) === String(filterCategory));
 
   return (
     <div className="space-y-6">
@@ -186,6 +216,11 @@ export default function AdminImages() {
       {/* Messages */}
       {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">{error}</div>}
       {success && <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">{success}</div>}
+      {orphanedCount > 0 && (
+        <div className="bg-amber-100 border border-amber-300 text-amber-800 px-4 py-3 rounded">
+          {orphanedCount} image(s) are linked to missing categories. Use the cleanup script to remove the legacy orphaned records or reassign them.
+        </div>
+      )}
 
       {/* Form */}
       {showForm && (
@@ -301,12 +336,12 @@ export default function AdminImages() {
             <Loader size={32} className="animate-spin text-blue-600" />
           </div>
         ) : filteredImages.length > 0 ? (
-          filteredImages.map((image) => (
-            <div key={image._id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+          filteredImages.map((image, index) => (
+            <div key={image?._id || index} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
               <img src={image.imageUrl} alt={image.title} className="w-full h-40 object-cover" />
               <div className="p-4">
                 <h3 className="text-lg font-semibold text-gray-800 mb-1">{image.title}</h3>
-                <p className="text-xs text-gray-500 mb-2">{image.categoryId.name}</p>
+                <p className="text-xs text-gray-500 mb-2">{getImageCategoryLabel(image)}</p>
                 {image.description && <p className="text-sm text-gray-600 mb-3">{image.description}</p>}
                 <div className="flex gap-2">
                   <button
