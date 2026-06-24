@@ -38,6 +38,7 @@ const HomeStaticSections = () => {
                   className="h-48 w-full object-cover hover:scale-[1.1] transition duration-300"
                   src="https://res.cloudinary.com/dyvccryuz/image/upload/v1746258778/photo17_ljomim.jpg"
                   alt="Support Education"
+                  loading="lazy"
                 />
                 <div className="p-4">
                   <h2 className="text-lg font-semibold text-gray-800 mb-2">Free Education</h2>
@@ -53,6 +54,7 @@ const HomeStaticSections = () => {
                   className="h-48 w-full object-cover hover:scale-110 transition duration-300"
                   src="https://res.cloudinary.com/dyvccryuz/image/upload/v1746258778/photo16_osxlpx.jpg"
                   alt="Healthcare Aid"
+                  loading="lazy"
                 />
                 <div className="p-4">
                   <h2 className="text-lg font-semibold text-gray-800 mb-2">Healthcare Aid</h2>
@@ -68,6 +70,7 @@ const HomeStaticSections = () => {
                   className="h-48 w-full object-cover hover:scale-[1.1] transition duration-300"
                   src="https://res.cloudinary.com/dyvccryuz/image/upload/v1746258778/photo9_c2ukbt.jpg"
                   alt="Feed the Hungry"
+                  loading="lazy"
                 />
                 <div className="p-4">
                   <h2 className="text-lg font-semibold text-gray-800 mb-2">Feed the Hungry</h2>
@@ -83,6 +86,7 @@ const HomeStaticSections = () => {
                   className="h-48 w-full object-cover hover:scale-[1.1] transition duration-300"
                   src="https://res.cloudinary.com/dyvccryuz/image/upload/v1746258776/photo1_blwial.jpg"
                   alt="Disaster Relief"
+                  loading="lazy"
                 />
                 <div className="p-4">
                   <h2 className="text-lg font-semibold text-gray-800 mb-2">Disaster Relief</h2>
@@ -98,6 +102,7 @@ const HomeStaticSections = () => {
                   className="h-48 w-full object-cover hover:scale-[1.1] transition duration-300"
                   src="https://res.cloudinary.com/dyvccryuz/image/upload/v1746258777/photo2_xov8qg.jpg"
                   alt="Women Empowerment"
+                  loading="lazy"
                 />
                 <div className="p-4">
                   <h2 className="text-lg font-semibold text-gray-800 mb-2">Women Empowerment</h2>
@@ -113,6 +118,7 @@ const HomeStaticSections = () => {
                   className="h-48 w-full object-cover hover:scale-[1.1] transition duration-300"
                   src="https://res.cloudinary.com/dyvccryuz/image/upload/v1746258777/photo13_idz2pi.jpg"
                   alt="Save Environment"
+                  loading="lazy"
                 />
                 <div className="p-4">
                   <h2 className="text-lg font-semibold text-gray-800 mb-2">Save Environment</h2>
@@ -128,6 +134,7 @@ const HomeStaticSections = () => {
                   className="h-48 w-full object-cover hover:scale-[1.1] transition duration-300"
                   src="https://images.pexels.com/photos/6235021/pexels-photo-6235021.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
                   alt="Animal Welfare"
+                  loading="lazy"
                 />
                 <div className="p-4">
                   <h2 className="text-lg font-semibold text-gray-800 mb-2">Animal Welfare</h2>
@@ -143,6 +150,7 @@ const HomeStaticSections = () => {
                   className="h-48 w-full object-cover hover:scale-[1.1] transition duration-300"
                   src="https://plus.unsplash.com/premium_photo-1702088085024-85e3cdd462fa?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                   alt="Art and Culture"
+                  loading="lazy"
                 />
                 <div className="p-4">
                   <h2 className="text-lg font-semibold text-gray-800 mb-2">Art and Culture</h2>

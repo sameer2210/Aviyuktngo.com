@@ -114,6 +114,7 @@ const Navbar = () => {
                       fallbackSrc={profileFallback}
                       alt={user?.name ? `${user.name} profile` : 'Profile'}
                       className="h-8 w-8 rounded-full object-cover"
+                      loading="eager"
                     />
                   </Link>
                   <button
@@ -173,6 +174,7 @@ const Navbar = () => {
                           fallbackSrc={profileFallback}
                           alt={user?.name ? `${user.name} profile` : 'Profile'}
                           className="h-6 w-6 rounded-full object-cover"
+                          loading="eager"
                         />
                         <span>Profile</span>
                       </Link>
