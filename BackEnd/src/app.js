@@ -6,6 +6,8 @@ const app = express();
 const contactRoutes = require('./routes/contact.routes.js');
 const razorpayRoutes = require('./routes/payment.routes.js');
 const authRoutes = require('./routes/authRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+const adminAuthRoutes = require('./routes/adminAuthRoutes');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const morgan = require('morgan');
@@ -84,5 +86,7 @@ app.use(bodyParser.json());
 app.use('/contact', contactRoutes);
 app.use('/razorpay', razorpayRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/admin/auth', adminAuthRoutes);
+app.use('/api/admin', adminRoutes);
 
 module.exports = app;

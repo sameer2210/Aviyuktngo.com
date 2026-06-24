@@ -5,6 +5,7 @@ import Navbar from './Components/Navbar';
 import Footer from './Components/Footer';
 import { servicesData } from './data/servicesData';
 import ProtectedRoute from './routes/ProtectedRoute';
+import ProtectedAdminRoute from './routes/ProtectedAdminRoute';
 
 const Home = lazy(() => import('./pages/Home'));
 const Storyline = lazy(() => import('./pages/Storyline'));
@@ -17,6 +18,9 @@ const Credits = lazy(() => import('./pages/Credits'));
 const PayHistory = lazy(() => import('./pages/Payhistory.jsx'));
 const Services = lazy(() => import('./pages/Services'));
 const ServiceDetail = lazy(() => import('./pages/ServiceDetail'));
+const Gallery = lazy(() => import('./pages/Gallery'));
+const AdminDashboard = lazy(() => import('./Components/Admin/AdminDashboard'));
+const AdminLogin = lazy(() => import('./pages/AdminLogin'));
 
 const RouteFallback = () => (
   <div className="min-h-[60vh] w-full bg-[#ebebeb] p-6 md:p-10">
@@ -51,6 +55,16 @@ const App = () => {
           <Route path="/credits" element={<Credits />} />
           <Route path="/payhistory" element={<PayHistory />} />
           <Route path="/services" element={<Services />} />
+          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/admin-login" element={<AdminLogin />} />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedAdminRoute>
+                <AdminDashboard />
+              </ProtectedAdminRoute>
+            }
+          />
           {servicesData.map((service) => (
             <Route
               key={service.slug}

@@ -1,7 +1,7 @@
 import { Menu, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { FiLogOut } from 'react-icons/fi';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
 import SkeletonImage from './SkeletonImage';
 
@@ -9,15 +9,22 @@ const navItems = [
   { label: 'Home', path: '/' },
   { label: 'About', path: '/storyline' },
   { label: 'Services', path: '/services' },
+  { label: 'Events', path: '/gallery' },
   { label: 'Plans', path: '/plans' },
   { label: 'Donate', path: '/highlights' },
 ];
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, isAuthenticated, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  // Hide navbar on admin pages
+  if (location.pathname.startsWith('/admin')) {
+    return null;
+  }
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 28);

@@ -124,4 +124,21 @@ const getPaymentHistory = async (req, res) => {
   }
 };
 
-module.exports = { paymentcreate, paymentverify, getPaymentHistory };
+// Get all payments for admin panel
+const getAllPaymentsAdmin = async (req, res) => {
+  try {
+    // Get all payments sorted by newest first
+    const allPayments = await paymentModel.find().sort({ createdAt: -1 });
+
+    if (!allPayments) {
+      return res.status(200).json([]);
+    }
+
+    return res.status(200).json(allPayments);
+  } catch (error) {
+    console.error('Error fetching all payments:', error);
+    return res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+module.exports = { paymentcreate, paymentverify, getPaymentHistory, getAllPaymentsAdmin };

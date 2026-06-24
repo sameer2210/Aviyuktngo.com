@@ -5,6 +5,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import { HelmetProvider } from 'react-helmet-async';
 import App from './App';
 import { AuthProvider } from './context/AuthContext';
+import { AdminAuthProvider } from './context/AdminAuthContext';
 import './index.css'; // Tailwind or global CSS
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
@@ -14,9 +15,11 @@ const RootWrapper = import.meta.env.DEV ? React.Fragment : React.StrictMode;
 const appTree = (
   <HelmetProvider>
     <AuthProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <AdminAuthProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </AdminAuthProvider>
     </AuthProvider>
   </HelmetProvider>
 );

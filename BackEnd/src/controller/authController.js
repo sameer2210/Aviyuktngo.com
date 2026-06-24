@@ -132,3 +132,17 @@ exports.getGoogleClientId = (req, res) => {
 
   return res.status(200).json({ clientId: GOOGLE_CLIENT_ID });
 };
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await userModel
+      .find()
+      .select('_id name email profilePic createdAt updatedAt')
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json(users);
+  } catch (error) {
+    console.error('Get all users error:', error);
+    return res.status(500).json({ message: 'Failed to fetch users' });
+  }
+};

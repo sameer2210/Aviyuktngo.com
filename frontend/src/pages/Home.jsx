@@ -1,16 +1,23 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom'; // make sure you're using react-router
-import HighlightsSlider from '../Components/HighlightsSlider';
-import AimMissionSection from '../Components/HomeSections/AimMissionSection';
-import CtaSection from '../Components/HomeSections/CtaSection';
+import { useEffect, useState, Suspense, lazy } from 'react';
+import { Link } from 'react-router-dom';
 import HeroSection from '../Components/HomeSections/HeroSection';
 import HomeLoader from '../Components/HomeSections/HomeLoader';
-import HomeStaticSections from '../Components/HomeSections/HomeStaticSections';
-import TransparencySection from '../Components/HomeSections/TransparencySection';
-import TrustHighlightsSection from '../Components/HomeSections/TrustHighlightsSection';
 import SkeletonImage from '../Components/SkeletonImage';
 import { slides } from '../data/homepageContent';
 import axios from '../instant/axios';
+
+// Lazy load heavy components
+const HighlightsSlider = lazy(() => import('../Components/HighlightsSlider'));
+const AimMissionSection = lazy(() => import('../Components/HomeSections/AimMissionSection'));
+const HomeStaticSections = lazy(() => import('../Components/HomeSections/HomeStaticSections'));
+const TransparencySection = lazy(() => import('../Components/HomeSections/TransparencySection'));
+const TrustHighlightsSection = lazy(() => import('../Components/HomeSections/TrustHighlightsSection'));
+const CtaSection = lazy(() => import('../Components/HomeSections/CtaSection'));
+
+// Fallback component
+const SectionLoader = () => (
+  <div className="w-full h-96 bg-gray-200 animate-pulse rounded-lg" />
+);
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -46,15 +53,21 @@ const Home = () => {
   return (
     <>
       <HeroSection />
-      <AimMissionSection />
-      <HomeStaticSections />
+      
+      <Suspense fallback={<SectionLoader />}>
+        <AimMissionSection />
+      </Suspense>
+      
+      <Suspense fallback={<SectionLoader />}>
+        <HomeStaticSections />
+      </Suspense>
 
       {/* project section start */}
       <div className="hidden md:flex w-[90vw] mx-auto justify-between items-center gap-5 py-10">
         {/* Left big image */}
         <div className="relative h-[30vh] md:h-[53vh] w-full md:w-[25%] overflow-hidden group">
           <SkeletonImage
-            src="https://res.cloudinary.com/dyvccryuz/image/upload/v1746258778/photo8_igrw89.jpg"
+            src="https://res.cloudinary.com/dyvccryuz/image/upload/w_600,q_70,f_auto/v1746258778/photo8_igrw89.jpg"
             alt=""
             className="h-full w-full object-cover transform group-hover:scale-110 transition-all duration-500"
           />
@@ -71,7 +84,7 @@ const Home = () => {
             {/* Small image */}
             <div className="relative h-[30vh] md:h-[25vh] w-full md:w-[20vw] overflow-hidden group">
               <SkeletonImage
-                src="https://res.cloudinary.com/dyvccryuz/image/upload/v1746258779/photo23_m0mmu8.jpg"
+                src="https://res.cloudinary.com/dyvccryuz/image/upload/w_500,q_70,f_auto/v1746258779/photo23_m0mmu8.jpg"
                 alt="Green Revolution"
                 loading="lazy"
                 className="h-full w-full object-cover transform group-hover:scale-110 transition-all duration-500"
@@ -103,7 +116,7 @@ const Home = () => {
           <div className="flex justify-between items-center gap-5">
             <div className="relative h-[30vh] md:h-[25vh] w-full md:w-[32%] overflow-hidden group">
               <SkeletonImage
-                src="https://images.unsplash.com/photo-1622908961227-ebf9ccdc342d?q=80&w=2134&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                src="https://images.unsplash.com/photo-1622908961227-ebf9ccdc342d?q=60&w=800&auto=format&fit=crop&ixlib=rb-4.0.3"
                 alt="Save Animals"
                 loading="lazy"
                 className="h-full w-full object-cover transform group-hover:scale-110 transition-all duration-500"
@@ -116,7 +129,7 @@ const Home = () => {
 
             <div className="relative h-[30vh] md:h-[25vh] w-full md:w-[32%] overflow-hidden group">
               <SkeletonImage
-                src="https://images.unsplash.com/photo-1709122066713-4c904721a378?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                src="https://images.unsplash.com/photo-1709122066713-4c904721a378?q=60&w=800&auto=format&fit=crop&ixlib=rb-4.0.3"
                 alt="Women Empowerment"
                 loading="lazy"
                 className="h-full w-full object-cover transform group-hover:scale-110 transition-all duration-500"
@@ -129,7 +142,7 @@ const Home = () => {
 
             <div className="relative h-[30vh] md:h-[25vh] w-full md:w-[32%] overflow-hidden group">
               <SkeletonImage
-                src="https://images.pexels.com/photos/764681/pexels-photo-764681.jpeg?auto=compress&cs=tinysrgb&w=600"
+                src="https://images.pexels.com/photos/764681/pexels-photo-764681.jpeg?auto=compress&cs=tinysrgb&w=500&h=400&fit=crop"
                 alt="Promote Education"
                 loading="lazy"
                 className="h-full w-full object-cover transform group-hover:scale-110 transition-all duration-500"
@@ -142,10 +155,22 @@ const Home = () => {
           </div>
         </div>
       </div>
-      <HighlightsSlider />
-      <TransparencySection />
-      <TrustHighlightsSection />
-      <CtaSection />
+      
+      <Suspense fallback={<SectionLoader />}>
+        <HighlightsSlider />
+      </Suspense>
+      
+      <Suspense fallback={<SectionLoader />}>
+        <TransparencySection />
+      </Suspense>
+      
+      <Suspense fallback={<SectionLoader />}>
+        <TrustHighlightsSection />
+      </Suspense>
+      
+      <Suspense fallback={<SectionLoader />}>
+        <CtaSection />
+      </Suspense>
 
       <div className="min-h-[50vh] w-full flex flex-col md:flex-row justify-center items-center ">
         {/* Text Side */}
@@ -186,7 +211,7 @@ const Home = () => {
         <div className="w-full md:w-[50%] h-full flex justify-center md:justify-end">
           <SkeletonImage
             className="h-[60vh] object-contain"
-            src="https://res.cloudinary.com/dyvccryuz/image/upload/v1746259327/volunteer_a8negb.png"
+            src="https://res.cloudinary.com/dyvccryuz/image/upload/w_600,q_75,f_auto/v1746259327/volunteer_a8negb.png"
             alt=""
           />
         </div>
@@ -201,7 +226,7 @@ const Home = () => {
           <div className="h-auto w-full sm:w-[80%] md:w-[45%] lg:w-[28%] flex flex-col items-center">
             <SkeletonImage
               className="w-full h-[250px] object-cover rounded-md hover:rotate-6 transition-all duration-300"
-              src="https://res.cloudinary.com/dyvccryuz/image/upload/v1746258776/photo12_i7kftb.jpg"
+              src="https://res.cloudinary.com/dyvccryuz/image/upload/w_500,q_70,f_auto/v1746258776/photo12_i7kftb.jpg"
               alt="Plant Trees"
             />
             <div className="flex justify-around items-center w-full my-4">
@@ -218,7 +243,7 @@ const Home = () => {
           <div className="h-auto w-full sm:w-[80%] md:w-[45%] lg:w-[28%] flex flex-col pb-10 items-center">
             <SkeletonImage
               className="w-full h-[250px] object-cover rounded-md hover:rotate-6 transition-all duration-300"
-              src="https://res.cloudinary.com/dyvccryuz/image/upload/v1746258779/photo19_yaqpxi.jpg"
+              src="https://res.cloudinary.com/dyvccryuz/image/upload/w_500,q_70,f_auto/v1746258779/photo19_yaqpxi.jpg"
               alt="Awareness Campaign"
             />
             <div className="flex justify-around items-center w-full my-4">
@@ -235,7 +260,7 @@ const Home = () => {
           <div className="h-auto w-full sm:w-[80%] md:w-[45%] lg:w-[28%] flex flex-col items-center">
             <SkeletonImage
               className="w-full h-[250px] object-cover rounded-md hover:rotate-6 transition-all duration-300"
-              src="https://res.cloudinary.com/dyvccryuz/image/upload/v1746258777/photo5_vi1ugb.jpg"
+              src="https://res.cloudinary.com/dyvccryuz/image/upload/w_500,q_70,f_auto/v1746258777/photo5_vi1ugb.jpg"
               alt="Forest Conservation"
             />
             <div className="flex justify-around items-center w-full my-4">
