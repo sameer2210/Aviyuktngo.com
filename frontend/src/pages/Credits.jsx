@@ -19,6 +19,13 @@ const team = [
     linkedin: 'https://www.linkedin.com/in/ankesh-barhadiya05112002/',
   },
   {
+    name: 'Vikram Rana',
+    role: 'Co-Founder & Tech Lead',
+    image: 'https://res.cloudinary.com/dc2geexnf/image/upload/v1790873822/WhatsApp_Image_2026-10-01_at_10.08.28_PM_ptsw8n.jpg',
+    email: 'Vikramrana224400.com@gmail.com',
+    linkedin: '',
+  },  
+  {
     name: 'Sameer khan',
     role: ' Co-Founder  & Tech Lead',
     image:
