@@ -17,6 +17,7 @@ const team = [
     image: 'https://res.cloudinary.com/dyvccryuz/image/upload/v1746259326/Anku_so4got.jpg',
     email: 'ankeshbarahdiya05112002@gmail.com',
     linkedin: 'https://www.linkedin.com/in/ankesh-barhadiya05112002/',
+    Portfolio: 'https://my-portpolio-theta-roan.vercel.app/',
   },
   {
     name: 'Vikram Rana',
